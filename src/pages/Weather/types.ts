@@ -40,3 +40,7 @@ export interface Weather {
   city: City;
   list: ListItem[];
 }
+
+export interface WeatherSate {
+  weather: Weather | null;
+}

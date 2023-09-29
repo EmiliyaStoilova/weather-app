@@ -1,16 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Weather } from "./types";
+import { Coord, Weather } from "./types";
 
 export const weatherApi = createApi({
   reducerPath: "weatherApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${process.env.REACT_APP_API_URL}` }),
   endpoints: (builder) => ({
-    getWeatherCast: builder.query<Weather, void>({
-      query: () => ({
+    getWeatherCast: builder.query<Weather, Coord>({
+      query: ({ lat, lon }) => ({
         url: "",
         params: {
-          lat: 42.69751,
-          lon: 23.32415,
+          lat,
+          lon,
           appid: process.env.REACT_APP_APPID,
           units: "metric"
         }
@@ -19,6 +19,6 @@ export const weatherApi = createApi({
   })
 });
 
-export const { useGetWeatherCastQuery } = weatherApi;
+export const { useGetWeatherCastQuery, useLazyGetWeatherCastQuery } = weatherApi;
 export const weatherApiReducer = weatherApi.reducer;
 export const weatherApiMiddleware = weatherApi.middleware;

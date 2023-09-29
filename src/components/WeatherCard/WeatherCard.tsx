@@ -39,22 +39,16 @@ export const WeatherCard: FunctionComponent<WeatherCardProps> = ({ data, city, i
       <div className={`flex flex-col justify-between ${isTodayCard && "w-1/3"}`}>
         {city && (
           <div className="h-full flex flex-col items-center justify-center">
-            <div className="flex items-baseline">
+            <div className="flex items-center">
               <img src={LocationIcon} className="w-9 mr-2" />
-              <span className="text-5xl font-medium">{city.name}</span>
+              <span className="text-4xl font-medium">{city.name}</span>
             </div>
-            {/* <div>
-              <span className="text-xl">{format(new Date(city.sunrise).getTime() * city.timezone, "HH:mm")}</span>
-            </div>
-            <div>
-              <span className="text-xl">{format(new Date(city.sunset).getTime() * city.timezone, "HH:mm")}</span>
-            </div> */}
           </div>
         )}
         <div className="flex items-center justify-end">
-          <img src={CalendarIcon} className={`${isTodayCard ? "w-9" : "w-6"}  mr-2`} />
-          <span className={`${isTodayCard ? "text-lg font-semibold" : "text-base"}`}>
-            {format(new Date(data.dt_txt), "dd.MM.yy")}
+          <img src={CalendarIcon} className={`${isTodayCard ? "w-8" : "w-6"}  mr-2`} />
+          <span className={`${isTodayCard ? "text-xl font-semibold" : "text-base"}`}>
+            {format(new Date(data.dt_txt), "eeee, dd MMM")}
           </span>
         </div>
       </div>
