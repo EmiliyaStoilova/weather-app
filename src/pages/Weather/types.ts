@@ -24,6 +24,7 @@ export interface ListItemWeather {
   id: number;
   main: string;
   description: string;
+  icon: string;
 }
 
 export interface ListItem {
