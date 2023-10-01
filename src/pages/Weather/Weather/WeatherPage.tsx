@@ -1,22 +1,26 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { compareAsc } from "date-fns";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 import { useAppSelector } from "app/redux/hooks";
 
 import { useGetWeatherCastQuery, useLazyGetWeatherCastQuery } from "../weatherApi";
-import { Button, InputField, LoadingOverlay, SelectField, WeatherCard } from "components";
+import { Button, InputField, LoadingOverlay, SelectField } from "components";
 import { weatherSelector } from "../weatherSlice";
 import SearchIcon from "assets/search.svg";
 import { Units } from "../types";
+import { WeatherCard } from "./components";
 
 const SofiaLat = 42.69751;
 const SofiaLon = 23.32415;
 
 export const WeatherPage = () => {
+  const savedUnitsValue = localStorage.getItem("units") as Units;
   // Sofia coordinates - default values
   const [lat, setLat] = useState<string | number>(SofiaLat);
   const [lon, setLon] = useState<string | number>(SofiaLon);
-  const [units, setUnits] = useState(Units.STANDARD);
+  const [units, setUnits] = useState(savedUnitsValue || Units.STANDARD);
 
   const { isLoading } = useGetWeatherCastQuery(
     { lat: Number(lat), lon: Number(lon), units },
@@ -66,6 +70,13 @@ export const WeatherPage = () => {
     await getData({ lat: Number(lat), lon: Number(lon), units });
   };
 
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedUnits = event.target.value as Units;
+    setUnits(selectedUnits);
+    console.log(selectedUnits);
+    localStorage.setItem("units", selectedUnits);
+  };
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -83,10 +94,10 @@ export const WeatherPage = () => {
   return isLoading ? (
     <LoadingOverlay />
   ) : (
-    <div className="py-8 mx-auto max-w-4xl">
-      <div className="mb-4 flex justify-between items-center">
-        <div className="flex items-center w-[50%]">
-          <div className="flex-grow mr-4">
+    <div className="py-8 px-4 lg:px-0 mx-auto max-w-4xl">
+      <div className="mb-4 md:flex justify-end md:justify-between items-center">
+        <div className="mb-4 md:mb-0 grid grid-rows-3 gap-4 sm:grid-cols-3 sm:grid-rows-1 w-full md:w-[50%]">
+          <div className="w-full">
             <InputField
               handleChange={(e) => setLat(e.target.value)}
               value={lat}
@@ -94,7 +105,7 @@ export const WeatherPage = () => {
               placeholder="Latitude"
             />
           </div>
-          <div className="flex-grow mr-4">
+          <div className="w-full">
             <InputField
               handleChange={(e) => setLon(e.target.value)}
               value={lon}
@@ -102,7 +113,7 @@ export const WeatherPage = () => {
               placeholder="Longitude"
             />
           </div>
-          <div className="w-1/4">
+          <div className="w-full">
             <Button
               text="Search"
               onClick={() => searchNewCoordinates()}
@@ -112,22 +123,26 @@ export const WeatherPage = () => {
             />
           </div>
         </div>
-        <div className="w-1/4">
-          <SelectField
-            value={units}
-            onChange={(e) => setUnits(e.target.value as Units)}
-            options={unitsOptions}
-            testId="units-select"
-          />
+        <div className="w-full md:w-1/4">
+          <SelectField value={units} onChange={handleSelectChange} options={unitsOptions} testId="units-select" />
         </div>
       </div>
       <div className="mb-4">
         <WeatherCard data={today[0]} isTodayCard city={weather?.city} />
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="hidden md:grid grid-cols-4 gap-4">
         {restDays.slice(0, 4).map((item) => (
           <WeatherCard key={item.dt} data={item} />
         ))}
+      </div>
+      <div className="md:hidden">
+        <Swiper breakpoints={{ 520: { slidesPerView: 2.3 } }} spaceBetween={8} slidesPerView={1.5}>
+          {restDays.slice(0, 4).map((item) => (
+            <SwiperSlide key={item.dt}>
+              <WeatherCard data={item} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </div>
   );
