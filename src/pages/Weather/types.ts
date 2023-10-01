@@ -1,6 +1,16 @@
+export enum Units {
+  STANDARD = "standard",
+  METRIC = "metric",
+  IMPERIAL = "imperial"
+}
+
 export interface Coord {
   lat: number;
   lon: number;
+}
+
+export interface GetWeatherParams extends Coord {
+  units: Units;
 }
 
 export interface City {

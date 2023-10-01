@@ -3,10 +3,11 @@ import { compareAsc } from "date-fns";
 
 import { useAppSelector } from "app/redux/hooks";
 
-import { useLazyGetWeatherCastQuery } from "../weatherApi";
-import { Button, InputField, LoadingOverlay, WeatherCard } from "components";
+import { useGetWeatherCastQuery, useLazyGetWeatherCastQuery } from "../weatherApi";
+import { Button, InputField, LoadingOverlay, SelectField, WeatherCard } from "components";
 import { weatherSelector } from "../weatherSlice";
 import SearchIcon from "assets/search.svg";
+import { Units } from "../types";
 
 const SofiaLat = 42.69751;
 const SofiaLon = 23.32415;
@@ -15,9 +16,31 @@ export const WeatherPage = () => {
   // Sofia coordinates - default values
   const [lat, setLat] = useState<string | number>(SofiaLat);
   const [lon, setLon] = useState<string | number>(SofiaLon);
+  const [units, setUnits] = useState(Units.STANDARD);
 
+  const { isLoading } = useGetWeatherCastQuery(
+    { lat: Number(lat), lon: Number(lon), units },
+    { refetchOnMountOrArgChange: true }
+  );
   const [getData, { isFetching }] = useLazyGetWeatherCastQuery();
   const { weather } = useAppSelector(weatherSelector);
+
+  const unitsOptions = useMemo(() => {
+    return [
+      {
+        value: Units.STANDARD,
+        title: "Kelvin"
+      },
+      {
+        value: Units.IMPERIAL,
+        title: "Fahrenheit "
+      },
+      {
+        value: Units.METRIC,
+        title: "Celsius "
+      }
+    ];
+  }, []);
 
   // Get the data for the current day
   const today = useMemo(() => {
@@ -40,7 +63,7 @@ export const WeatherPage = () => {
   }, [weather]);
 
   const searchNewCoordinates = async () => {
-    await getData({ lat: Number(lat), lon: Number(lon) });
+    await getData({ lat: Number(lat), lon: Number(lon), units });
   };
 
   useEffect(() => {
@@ -57,38 +80,44 @@ export const WeatherPage = () => {
     }
   }, []);
 
-  useEffect(() => {
-    searchNewCoordinates();
-  }, []);
-
-  return !weather ? (
+  return isLoading ? (
     <LoadingOverlay />
   ) : (
     <div className="py-8 mx-auto max-w-4xl">
-      <div className="mb-4 flex items-center w-[50%]">
-        <div className="flex-grow mr-4">
-          <InputField
-            handleChange={(e) => setLat(e.target.value)}
-            value={lat}
-            testId="lat-input"
-            placeholder="Latitude"
-          />
-        </div>
-        <div className="flex-grow mr-4">
-          <InputField
-            handleChange={(e) => setLon(e.target.value)}
-            value={lon}
-            testId="lon-input"
-            placeholder="Longitude"
-          />
+      <div className="mb-4 flex justify-between items-center">
+        <div className="flex items-center w-[50%]">
+          <div className="flex-grow mr-4">
+            <InputField
+              handleChange={(e) => setLat(e.target.value)}
+              value={lat}
+              testId="lat-input"
+              placeholder="Latitude"
+            />
+          </div>
+          <div className="flex-grow mr-4">
+            <InputField
+              handleChange={(e) => setLon(e.target.value)}
+              value={lon}
+              testId="lon-input"
+              placeholder="Longitude"
+            />
+          </div>
+          <div className="w-1/4">
+            <Button
+              text="Search"
+              onClick={() => searchNewCoordinates()}
+              testId="search-button"
+              icon={SearchIcon}
+              disabled={isFetching || isLoading}
+            />
+          </div>
         </div>
         <div className="w-1/4">
-          <Button
-            text="Search"
-            onClick={() => searchNewCoordinates()}
-            testId="search-button"
-            icon={SearchIcon}
-            disabled={isFetching}
+          <SelectField
+            value={units}
+            onChange={(e) => setUnits(e.target.value as Units)}
+            options={unitsOptions}
+            testId="units-select"
           />
         </div>
       </div>
