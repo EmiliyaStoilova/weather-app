@@ -6,7 +6,6 @@ import { DayDetailsPage, WeatherPage } from "./pages/Weather";
 import { ROUTE_CONFIG } from "./routes/config";
 
 function App() {
-  // console.log(process.env.REACT_APP_APPID)
   return (
     <Provider store={store}>
       <BrowserRouter>
