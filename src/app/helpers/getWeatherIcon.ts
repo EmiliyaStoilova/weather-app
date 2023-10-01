@@ -28,8 +28,6 @@ export const getWeatherIcon = (icon: string) => {
       return DayClouds;
     case "04n":
       return NightClouds;
-    case "01n4d":
-      return DayClouds;
     case "09d":
       return Rain;
     case "09n":
