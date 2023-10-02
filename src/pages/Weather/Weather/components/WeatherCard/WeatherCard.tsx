@@ -23,6 +23,7 @@ export const WeatherCard: FunctionComponent<WeatherCardProps> = ({ data, city, i
         isTodayCard ? "flex-col md:flex-row" : "flex-col m-4"
       }`}
       onClick={() => navigate(`${data.dt}`)}
+      data-test="weather-card"
     >
       <div
         className={`mb-4 md:mb-0 flex items-center ${

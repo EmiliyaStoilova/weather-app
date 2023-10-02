@@ -6,7 +6,7 @@ import "swiper/css";
 import { useAppSelector } from "app/redux/hooks";
 
 import { useGetWeatherCastQuery, useLazyGetWeatherCastQuery } from "../weatherApi";
-import { Button, InputField, LoadingOverlay, SelectField } from "components";
+import { Button, InputField, Layout, LoadingOverlay, SelectField } from "components";
 import { weatherSelector } from "../weatherSlice";
 import SearchIcon from "assets/search.svg";
 import { Units } from "../types";
@@ -37,11 +37,11 @@ export const WeatherPage = () => {
       },
       {
         value: Units.IMPERIAL,
-        title: "Fahrenheit "
+        title: "Fahrenheit"
       },
       {
         value: Units.METRIC,
-        title: "Celsius "
+        title: "Celsius"
       }
     ];
   }, []);
@@ -73,7 +73,6 @@ export const WeatherPage = () => {
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUnits = event.target.value as Units;
     setUnits(selectedUnits);
-    console.log(selectedUnits);
     localStorage.setItem("units", selectedUnits);
   };
 
@@ -94,56 +93,47 @@ export const WeatherPage = () => {
   return isLoading ? (
     <LoadingOverlay />
   ) : (
-    <div className="py-8 px-4 lg:px-0 mx-auto max-w-4xl">
-      <div className="mb-4 md:flex justify-end md:justify-between items-center">
-        <div className="mb-4 md:mb-0 grid grid-rows-3 gap-4 sm:grid-cols-3 sm:grid-rows-1 w-full md:w-[50%]">
-          <div className="w-full">
-            <InputField
-              handleChange={(e) => setLat(e.target.value)}
-              value={lat}
-              testId="lat-input"
-              placeholder="Latitude"
-            />
+    <Layout>
+      <>
+        <div className="mb-4 md:flex justify-end md:justify-between items-center">
+          <div className="mb-4 md:mb-0 grid grid-rows-3 gap-4 sm:grid-cols-3 sm:grid-rows-1 w-full md:w-[50%]">
+            <div className="w-full">
+              <InputField handleChange={(e) => setLat(e.target.value)} value={lat} placeholder="Latitude" />
+            </div>
+            <div className="w-full">
+              <InputField handleChange={(e) => setLon(e.target.value)} value={lon} placeholder="Longitude" />
+            </div>
+            <div className="w-full">
+              <Button
+                text="Search"
+                onClick={() => searchNewCoordinates()}
+                icon={SearchIcon}
+                disabled={isFetching || isLoading}
+              />
+            </div>
           </div>
-          <div className="w-full">
-            <InputField
-              handleChange={(e) => setLon(e.target.value)}
-              value={lon}
-              testId="lon-input"
-              placeholder="Longitude"
-            />
-          </div>
-          <div className="w-full">
-            <Button
-              text="Search"
-              onClick={() => searchNewCoordinates()}
-              testId="search-button"
-              icon={SearchIcon}
-              disabled={isFetching || isLoading}
-            />
+          <div className="w-full md:w-1/4">
+            <SelectField value={units} onChange={handleSelectChange} options={unitsOptions} />
           </div>
         </div>
-        <div className="w-full md:w-1/4">
-          <SelectField value={units} onChange={handleSelectChange} options={unitsOptions} testId="units-select" />
+        <div className="mb-4">
+          <WeatherCard data={today[0]} isTodayCard city={weather?.city} />
         </div>
-      </div>
-      <div className="mb-4">
-        <WeatherCard data={today[0]} isTodayCard city={weather?.city} />
-      </div>
-      <div className="hidden md:grid grid-cols-4 gap-4">
-        {restDays.slice(0, 4).map((item) => (
-          <WeatherCard key={item.dt} data={item} />
-        ))}
-      </div>
-      <div className="md:hidden">
-        <Swiper breakpoints={{ 520: { slidesPerView: 2.3 } }} spaceBetween={8} slidesPerView={1.5}>
+        <div className="hidden md:grid grid-cols-4 gap-4">
           {restDays.slice(0, 4).map((item) => (
-            <SwiperSlide key={item.dt}>
-              <WeatherCard data={item} />
-            </SwiperSlide>
+            <WeatherCard key={item.dt} data={item} />
           ))}
-        </Swiper>
-      </div>
-    </div>
+        </div>
+        <div className="md:hidden">
+          <Swiper breakpoints={{ 520: { slidesPerView: 2.3 } }} spaceBetween={8} slidesPerView={1.5}>
+            {restDays.slice(0, 4).map((item) => (
+              <SwiperSlide key={item.dt}>
+                <WeatherCard data={item} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      </>
+    </Layout>
   );
 };
