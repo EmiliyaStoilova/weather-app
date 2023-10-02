@@ -6,15 +6,14 @@ interface SelectFieldProps {
   onChange: ChangeEventHandler<HTMLSelectElement>;
   value: string | number;
   options: { value: Units; title: string }[];
-  testId: string;
 }
 
-export const SelectField: FunctionComponent<SelectFieldProps> = ({ onChange, value, options, testId }) => {
+export const SelectField: FunctionComponent<SelectFieldProps> = ({ onChange, value, options }) => {
   return (
     <select
       value={value}
       onChange={onChange}
-      data-test={testId}
+      data-test="select"
       className="shadow-md rounded-md p-2 w-full border-none outline-none"
     >
       {options.map((option, index) => (

@@ -3,16 +3,15 @@ import React, { FunctionComponent, MouseEventHandler } from "react";
 interface ButtonProps {
   text: string;
   onClick: MouseEventHandler;
-  testId: string;
   icon?: string;
   disabled?: boolean;
 }
 
-export const Button: FunctionComponent<ButtonProps> = ({ text, onClick, testId, icon, disabled }) => {
+export const Button: FunctionComponent<ButtonProps> = ({ text, onClick, icon, disabled }) => {
   return (
     <button
       onClick={onClick}
-      data-test={testId}
+      data-test="button"
       className="bg-[#3461eb] text-white w-full p-2 rounded-md shadow-md duration-200"
       disabled={disabled}
     >

@@ -6,6 +6,7 @@ import { useAppSelector } from "app/redux/hooks";
 import { weatherSelector } from "../weatherSlice";
 import { getWeatherIcon } from "app/helpers/getWeatherIcon";
 import ArrowBack from "assets/arrowBack.svg";
+import { Layout } from "components";
 
 export const DayDetailsPage = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export const DayDetailsPage = () => {
   }, [date]);
 
   return (
-    <div className="py-8 px-4 lg:px-0 mx-auto max-w-4xl">
+    <Layout>
       <div className="shadow-md rounded-md p-4">
         <div className="flex justify-between items-center mb-14">
           <img src={ArrowBack} className="cursor-pointer w-6" onClick={() => navigate(-1)} />
@@ -44,6 +45,6 @@ export const DayDetailsPage = () => {
           ))}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };

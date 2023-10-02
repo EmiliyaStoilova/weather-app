@@ -4,16 +4,15 @@ interface InputFieldProps {
   value: number | string;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   placeholder: string;
-  testId: string;
 }
 
-export const InputField: FunctionComponent<InputFieldProps> = ({ value, handleChange, placeholder, testId }) => {
+export const InputField: FunctionComponent<InputFieldProps> = ({ value, handleChange, placeholder }) => {
   return (
     <input
       value={value}
       onChange={handleChange}
       placeholder={placeholder}
-      data-test={testId}
+      data-test="input"
       className="shadow-md rounded-md p-2 w-full border-none outline-none"
     />
   );
